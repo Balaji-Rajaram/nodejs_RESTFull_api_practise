@@ -1,17 +1,28 @@
 import request from 'supertest';
 import app from '../server.js'; // Ad// Adjust the path if necessary
-
+import mongoose from 'mongoose'; 
 var server;
 let token
 
+  
+
+
 // Start the server before running tests
-beforeEach(function (done) {
-  server = app.listen(3004, done);
+before(done => {
+  server = app.listen(3003, done);
 });
 
 // Stop the server after tests are done
-afterEach(function (done) {
-  server.close(done);
+after(async function() {
+  this.timeout(5000);  // Increase timeout to 5 seconds
+ 
+
+  // Close MongoDB connection and wait for it to finish
+  await mongoose.connection.close();
+  console.log('MongoDB connection closed');
+
+  // Then close the server
+  await new Promise(resolve => server.close(resolve));
 });
 
 describe('User API Tests', function () {
@@ -56,7 +67,7 @@ describe('User API Tests', function () {
       .end(done);
   });
 
-  // Test for protected route (GET) without token
+  // // Test for protected route (GET) without token
   it('should return status 401 on /protected without a token', function (done) {
     request(server)
       .get('/api/users/protected')

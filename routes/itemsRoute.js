@@ -7,7 +7,8 @@ const itemController = require('../controllers/itemsController');
 router.post('/create', itemController.createItem);
 router.get('/getAll', itemController.getItems);
 router.get('/getById/:id', itemController.getItemById);
-
+router.put('/UpdateById/:id', itemController.updateItem)
+router.delete('/DeleteById/:id', itemController.deleteItem)
 //  Add Missing Router
 
 

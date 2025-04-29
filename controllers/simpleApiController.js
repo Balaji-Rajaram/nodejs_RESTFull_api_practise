@@ -1,9 +1,13 @@
 exports.simpleGet = async (req,res)=>{
-    res.status(200).json({"message":"Response from method"})
+    
+    res.status(200).json({"message":"Response from GET method"})
 }
 
 exports.simplePost = async (req,res)=>{
-//    logic here
+   const {message} = req.body
+   console.log(req.body  , 'getting ' , message );
+
+   res.status(200).json({message})
 }
 
 exports.simplePut = async (req,res)=>{

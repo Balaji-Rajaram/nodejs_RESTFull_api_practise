@@ -5,26 +5,36 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test0": "mocha -r esm test/exercise_0.test.mjs",
-    "test1": "mocha -r esm test/exercise_1.test.mjs",
-    "test2": "mocha -r esm test/exercise_2.test.mjs",
-    "test3": "mocha -r esm test/exercise_3.test.mjs",
-    "test4": "mocha -r esm test/exercise_4.test.mjs",
-    "testAll": "mocha -r esm test/*.test.mjs"
+    "dev": "nodemon server.js",
+    "test0": "cross-env NODE_ENV=test mocha test/exercise_0.test.mjs",
+    "test1": "cross-env NODE_ENV=test  mocha  test/exercise_1.test.mjs",
+    "test2": "cross-env NODE_ENV=test  mocha  test/exercise_2.test.mjs",
+    "test3": "cross-env NODE_ENV=test  mocha  test/exercise_3.test.mjs",
+    "test4": "cross-env NODE_ENV=test  mocha  test/exercise_4.test.mjs",
+    "testAll": "cross-env NODE_ENV=test  mocha  test/*.test.mjs",
+"test2-watch": "cross-env NODE_ENV=test nodemon --exec 'mocha test/exercise_2.test.mjs' --watch 'test/exercise_2.test.mjs' --ext 'mjs,js,json'",
+"test3-watch": "cross-env NODE_ENV=test nodemon --exec 'mocha test/exercise_3.test.mjs' --watch 'test/exercise_3.test.mjs' --ext 'mjs,js,json'",
+"test4-watch": "cross-env NODE_ENV=test nodemon --exec 'mocha test/exercise_4.test.mjs' --watch 'test/exercise_4.test.mjs' --ext 'mjs,js,json'"
   },
+  
+
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
     "chai": "^5.1.1",
+    "dotenv": "^16.4.7",
     "esm": "^3.2.25",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mocha": "^10.7.0",
+    "mongodb": "^6.12.0",
     "mongoose": "^8.5.1",
+    "nodemon": "^3.1.9",
     "supertest": "^7.0.0"
   },
   "devDependencies": {
-    "chai-http": "^5.0.0"
+    "chai-http": "^5.0.0",
+    "cross-env": "^7.0.3",
+    "mocha": "^11.1.0"
   }
 }

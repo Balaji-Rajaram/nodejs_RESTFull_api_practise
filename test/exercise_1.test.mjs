@@ -2,16 +2,26 @@
 
 import request from 'supertest';
 import app from '../server.js';
+import mongoose from 'mongoose';
 let server;
 
 // Start the server before running tests
 before(done => {
-  server = app.listen(3001, done);
+  server = app.listen( 3100, done);
 });
 
 // Stop the server after tests are done
-after(done => {
-  server.close(done);
+after(async function() {
+  this.timeout(5000);  // Increase timeout to 5 seconds
+
+  console.log("everything is done rocky");
+
+  // Close MongoDB connection and wait for it to finish
+  await mongoose.connection.close();
+  console.log('MongoDB connection closed');
+
+  // Then close the server
+  await new Promise(resolve => server.close(resolve));
 });
 
 describe('Simple API Tests', () => {
@@ -29,9 +39,22 @@ describe('Simple API Tests', () => {
   });
 
   // Test for a POST request
-  it('should return status 200 and a response message on POST /', done => {
-    request(server)
+  it('should return status 200 and a response message on POST /', async () => {
+    const res = await request(server)
       .post('/api/simpleApi')
+      .send({ message: 'Response from POST method' })
+      .expect(200)
+      .expect('Content-Type', /json/);
+    
+    if (res.body.message !== 'Response from POST method') {
+      throw new Error('Unexpected response message');
+    }
+  });
+  
+  it('should return status 200 and a response message on POST /', done => {
+    request(server) 
+      .post('/api/simpleApi')
+      .send({message:'Response from POST method'})
       .expect(200)
       .expect('Content-Type', /json/)
       .expect(res => {
@@ -52,7 +75,7 @@ describe('Simple API Tests', () => {
       .end(done);
   });
 
-  // Test for a DELETE request
+  // // Test for a DELETE request
   it('should return status 200 and a response message on DELETE /', done => {
     request(server)
       .put('/api/simpleApi')

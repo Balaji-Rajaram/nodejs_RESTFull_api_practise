@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../server.js'; // Adjust the path if necessary
-
+import mongoose  from 'mongoose';
 let server;
 let testItemId; // To store ID of the created item for testing
 
@@ -10,8 +10,16 @@ before(done => {
 });
 
 // Stop the server after tests are done
-after(done => {
-  server.close(done);
+after(async function() {
+  this.timeout(5000);  // Increase timeout to 5 seconds
+ 
+
+  // Close MongoDB connection and wait for it to finish
+  await mongoose.connection.close();
+  console.log('MongoDB connection closed');
+
+  // Then close the server
+  await new Promise(resolve => server.close(resolve));
 });
 
 describe('Item API Tests', () => {
@@ -44,7 +52,7 @@ describe('Item API Tests', () => {
       .end(done);
   });
 
-  // Test for retrieving an item by ID (GET)
+  // // Test for retrieving an item by ID (GET)
   it('should return status 200 and the item by ID', done => {
     request(server)
       .get(`/api/items/getById/${testItemId}`)
@@ -57,7 +65,7 @@ describe('Item API Tests', () => {
       .end(done);
   });
 
-  // Test for updating an item (PUT)
+  // // Test for updating an item (PUT)
   it('should update an item and return status 200', done => {
     request(server)
       .put(`/api/items/UpdateById/${testItemId}`)
@@ -70,7 +78,7 @@ describe('Item API Tests', () => {
       .end(done);
   });
 
-  // Test for deleting an item (DELETE)
+  // // Test for deleting an item (DELETE)
   it('should delete an item and return status 200', done => {
     request(server)
       .delete(`/api/items/DeleteById/${testItemId}`)

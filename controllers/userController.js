@@ -9,7 +9,7 @@ var users = [];
 exports.signup = function (req, res) {
     
     // parse username and password
-
+    const { username , password } = req.body;
     // Check if the user already exists
     var existingUser = users.find(function (u) { return u.username === username; });
     if (existingUser) {
@@ -17,7 +17,7 @@ exports.signup = function (req, res) {
     }
 
     // Create a new user
-    var newUser = { username: username, password: password };
+    var newUser = { username, password };
     users.push(newUser);
 
     res.status(201).json({ message: 'User created successfully' });
@@ -25,13 +25,14 @@ exports.signup = function (req, res) {
 
 // Login route
 exports.login = function (req, res) {
-    var username = req.body.username;
-    var password = req.body.password;
+    const { username , password } = req.body;
 
     // Find the user
     var user = users.find(function (u) { return u.username === username && u.password === password; });
     if (user) {
-        
+        const token = generateToken(user);
+        console.log({token});
+        res.status(200).json({token});
         //  generate token and return
 
     } else {
@@ -42,4 +43,5 @@ exports.login = function (req, res) {
 // Example protected route
 exports.protectedRoute = function (req, res) {
     res.status(200).json({ message: 'Protected content accessed' });
+     
 };

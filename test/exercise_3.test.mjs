@@ -3,7 +3,7 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../server.js'; // Adjust the path if necessary
 
-const MONGO_URI = 'mongodb://localhost:27017/testdatabase';
+const MONGO_URI =  process.env.MONGO_URI;
 let server;
 let testProductId; // To store ID of the created product for testing
 
@@ -16,8 +16,16 @@ before(done => {
 });
 
 // Stop the server after tests are done
-after(done => {
-  server.close(done);
+after(async function() {
+  this.timeout(5000);  // Increase timeout to 5 seconds
+ 
+
+  // Close MongoDB connection and wait for it to finish
+  await mongoose.connection.close();
+  console.log('MongoDB connection closed');
+
+  // Then close the server
+  await new Promise(resolve => server.close(resolve));
 });
 
 describe('Product API Tests', () => {
@@ -50,7 +58,7 @@ describe('Product API Tests', () => {
       .end(done);
   });
 
-  // Test for retrieving a product by ID (GET)
+  // // Test for retrieving a product by ID (GET)
   it('should return status 200 and the product by ID', done => {
     request(server)
       .get(`/api/products/getById/${testProductId}`)
@@ -63,7 +71,7 @@ describe('Product API Tests', () => {
       .end(done);
   });
 
-  // Test for updating a product (PUT)
+  // // Test for updating a product (PUT)
   it('should update a product and return status 200', done => {
     request(server)
       .put(`/api/products/updateById/${testProductId}`)
@@ -76,7 +84,7 @@ describe('Product API Tests', () => {
       .end(done);
   });
 
-  // Test for deleting a product (DELETE)
+  // // Test for deleting a product (DELETE)
   it('should delete a product and return status 200', done => {
     request(server)
       .delete(`/api/products/deleteById/${testProductId}`)
